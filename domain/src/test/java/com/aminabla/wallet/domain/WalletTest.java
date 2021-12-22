@@ -11,20 +11,18 @@ class WalletTest {
 
     @Test
     void withdrawalSucceeds() {
-        WalletId walletId = new WalletId(1L);
+        WalletId walletId = new WalletId("alias", "user");
         Wallet wallet = defaultAccount()
                 .withId(walletId)
                 .withOperation(new WalletOperationBuilder()
-                        .withTargetAccount(walletId)
-                        .withSourceAccount(new WalletId(2L))
+                        .withWalletId(walletId)
                         .withMoney(Amount.of(455)).build())
                 .withOperation(new WalletOperationBuilder()
-                        .withTargetAccount(walletId)
-                        .withSourceAccount(new WalletId(2L))
+                        .withWalletId(walletId)
                         .withMoney(Amount.of(100)).build())
                 .build();
 
-        boolean success = wallet.withdraw(Amount.of(555L), new WalletId(3L));
+        boolean success = wallet.withdraw(Amount.of(555L));
 
         assertThat(success).isTrue();
         assertThat(wallet.balance()).isEqualTo(Amount.of(0L));
@@ -32,20 +30,18 @@ class WalletTest {
 
     @Test
     void withdrawalFailure() {
-        WalletId walletId = new WalletId(1L);
+        WalletId walletId = new WalletId("alias", "user");
         Wallet wallet = defaultAccount()
                 .withId(walletId)
                 .withOperation(new WalletOperationBuilder()
-                        .withTargetAccount(walletId)
-                        .withSourceAccount(new WalletId(2L))
+                        .withWalletId(walletId)
                         .withMoney(Amount.of(455)).build())
                 .withOperation(new WalletOperationBuilder()
-                        .withTargetAccount(walletId)
-                        .withSourceAccount(new WalletId(2L))
+                        .withWalletId(walletId)
                         .withMoney(Amount.of(100)).build())
                 .build();
 
-        boolean success = wallet.withdraw(Amount.of(1556L), new WalletId(2L));
+        boolean success = wallet.withdraw(Amount.of(1556L));
 
         assertThat(success).isFalse();
         assertThat(wallet.balance()).isEqualTo(Amount.of(555L));
@@ -53,20 +49,18 @@ class WalletTest {
 
     @Test
     void depositSuccess() {
-        WalletId walletId = new WalletId(1L);
+        WalletId walletId = new WalletId("alias", "user");
         Wallet wallet = defaultAccount()
                 .withId(walletId)
                 .withOperation(new WalletOperationBuilder()
-                        .withTargetAccount(walletId)
-                        .withSourceAccount(new WalletId(2L))
+                        .withWalletId(walletId)
                         .withMoney(Amount.of(455)).build())
                 .withOperation(new WalletOperationBuilder()
-                        .withTargetAccount(walletId)
-                        .withSourceAccount(new WalletId(2L))
+                        .withWalletId(walletId)
                         .withMoney(Amount.of(100)).build())
                 .build();
 
-        wallet.deposit(new WalletId(2L), Amount.of(445L));
+        wallet.deposit(Amount.of(445L));
         assertThat(wallet.balance()).isEqualTo(Amount.of(1000L));
     }
 

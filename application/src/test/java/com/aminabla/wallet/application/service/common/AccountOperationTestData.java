@@ -10,7 +10,7 @@ public class AccountOperationTestData {
 
 	public static class AccountOperationBuilder {
 		private WalletOperation.WalletOperationId id;
-		private Wallet.WalletId sourceWalletId;
+		private Wallet.WalletId walletId;
 		private Wallet.WalletId targetWalletId;
 		private LocalDateTime timestamp;
 		private Amount money;
@@ -24,13 +24,8 @@ public class AccountOperationTestData {
 			return this;
 		}
 
-		public AccountOperationBuilder withSourceAccount(Wallet.WalletId walletId) {
-			this.sourceWalletId = walletId;
-			return this;
-		}
-
-		public AccountOperationBuilder withTargetAccount(Wallet.WalletId walletId) {
-			this.targetWalletId = walletId;
+		public AccountOperationBuilder withWalletId(Wallet.WalletId walletId) {
+			this.walletId = walletId;
 			return this;
 		}
 
@@ -47,8 +42,7 @@ public class AccountOperationTestData {
 		public WalletOperation build() {
 			return new WalletOperation(
 					this.id,
-					this.sourceWalletId,
-					this.targetWalletId,
+					this.walletId,
 					this.timestamp,
 					this.money);
 		}

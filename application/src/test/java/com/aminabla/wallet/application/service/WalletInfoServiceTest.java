@@ -1,8 +1,8 @@
 package com.aminabla.wallet.application.service;
 
 import com.aminabla.wallet.application.exception.WalletNotFoundException;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletBalanceCommand;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletHistoryCommand;
+import com.aminabla.wallet.application.commands.QueryWalletBalanceCommand;
+import com.aminabla.wallet.application.commands.QueryWalletHistoryCommand;
 import com.aminabla.wallet.application.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.application.service.common.AccountOperationTestData.AccountOperationBuilder;
 import com.aminabla.wallet.domain.Amount;
@@ -35,7 +35,7 @@ class WalletInfoServiceTest {
     @Test
     void walletNotFound() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
         Double expectedBalance = 200D;
 
         when(loadWalletPort.loadWallet(walletId)).thenReturn(Optional.empty());
@@ -51,19 +51,17 @@ class WalletInfoServiceTest {
     @Test
     void balance() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
         Double expectedBalance = 200D;
         Wallet wallet = defaultAccount().
                 withId(walletId)
                 .withOperation(
                         new AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(expectedBalance/2)).build())
                 .withOperation(
                         new AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(expectedBalance/2)).build()
                 ).build();
 
@@ -84,18 +82,16 @@ class WalletInfoServiceTest {
     @Test
     void history() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
         Wallet wallet = defaultAccount().
                 withId(walletId)
                 .withOperation(
                         new AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(100)).build())
                 .withOperation(
                         new AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(100)).build()
                 ).build();
 
@@ -114,7 +110,7 @@ class WalletInfoServiceTest {
     @Test
     void historyEmpty() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
         Wallet wallet = defaultAccount().
                 withId(walletId)
                 .build();

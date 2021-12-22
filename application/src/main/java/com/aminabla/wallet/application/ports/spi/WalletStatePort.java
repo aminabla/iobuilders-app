@@ -8,6 +8,6 @@ public interface WalletStatePort {
 
 	void update(Wallet wallet);
 
-	Wallet create(User user);
+	Wallet create(Wallet.WalletId walletId);
 
 }

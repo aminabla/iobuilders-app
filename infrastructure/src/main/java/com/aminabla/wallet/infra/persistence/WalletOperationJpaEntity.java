@@ -22,10 +22,10 @@ public class WalletOperationJpaEntity {
 	private LocalDateTime timestamp;
 
 	@Column
-	private Long sourceWalletId;
+	private String walletId;
 
 	@Column
-	private Long targetWalletId;
+	private String ownerId;
 
 	@Column
 	private Double amount;

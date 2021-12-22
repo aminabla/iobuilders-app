@@ -16,13 +16,12 @@ public interface QueryInfoMapper {
 
     public static final QueryInfoMapper INSTANCE = Mappers.getMapper(QueryInfoMapper.class);
 
-    @Mapping(target = "walletId", source = "id.identifier")
+    @Mapping(target = "walletId", source = "id.walletAlias")
     @Mapping(target = "amount", source = "amount.amount")
     WalletBalanceDto toOutput(Balance balance);
 
     @Mapping(target = "operationId", source = "id.identifier")
-    @Mapping(target = "sourceWalletId", source = "sourceWalletId.identifier")
-    @Mapping(target = "targetWalletId", source = "targetWalletId.identifier")
+    @Mapping(target = "walletId", source = "walletId.walletAlias")
     @Mapping(target = "amount", source = "amount.amount")
     WalletOperationDto toOutput(WalletOperation walletOperation);
 

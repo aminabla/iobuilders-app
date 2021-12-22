@@ -1,39 +1,36 @@
 package com.aminabla.wallet.infra.controller;
 
-
-import com.aminabla.wallet.application.ports.api.WalletInfo;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletBalanceCommand;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletHistoryCommand;
-import com.aminabla.wallet.domain.Wallet.WalletId;
 import com.aminabla.wallet.infra.controller.dto.output.WalletBalanceDto;
 import com.aminabla.wallet.infra.controller.dto.output.WalletOperationDto;
-import com.aminabla.wallet.infra.controller.mapper.QueryInfoMapper;
-import org.springframework.web.bind.annotation.*;
+import io.swagger.annotations.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.annotations.ApiIgnore;
 
+import java.security.Principal;
 import java.util.List;
 
-@RestController
 @RequestMapping("/wallets")
-class WalletInfoController {
+public interface WalletInfoController {
 
-	private final WalletInfo walletBalanceInfo;
+    @ApiOperation(value = "Get Wallet current balance")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully"),
+            @ApiResponse(code = 400, message = "Bad request if the wallet alias is absent in the request body or is not registered")
+    })
+    @GetMapping(value = "/{walletAlias}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    WalletBalanceDto getBalance(@ApiParam(name="alias", value = "wallet alias") @PathVariable("walletAlias") String walletAlias, @ApiIgnore Principal principal);
 
-	public WalletInfoController(WalletInfo walletBalanceInfo) {
-		this.walletBalanceInfo = walletBalanceInfo;
-	}
-
-
-	@GetMapping("/{walletId}")
-	WalletBalanceDto getBalance(@PathVariable("walletId") Long walletId) {
-		QueryWalletBalanceCommand command = new QueryWalletBalanceCommand(new WalletId(walletId));
-		return QueryInfoMapper.INSTANCE.toOutput(walletBalanceInfo.getBalance(command));
-	}
-
-
-	@GetMapping("/{walletId}/history")
-	List<WalletOperationDto> getHistory(@PathVariable("walletId") Long walletId) {
-		QueryWalletHistoryCommand command = new QueryWalletHistoryCommand(new WalletId(walletId));
-		return QueryInfoMapper.INSTANCE.toOutput(walletBalanceInfo.getOperationsHistory(command));
-	}
-
+    @ApiOperation(value = "Get Wallet's history of operations over balance")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully"),
+            @ApiResponse(code = 400, message = "Bad request if the wallet alias is absent in the request body or is not registered")
+    })
+    @GetMapping(value = "/{walletAlias}/history", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    List<WalletOperationDto> getHistory(@ApiParam(name="alias", value = "wallet alias") @PathVariable("walletAlias") String walletAlias, @ApiIgnore Principal principal);
 }

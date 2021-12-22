@@ -1,13 +1,14 @@
-package com.aminabla.wallet.application.ports.api.commands;
+package com.aminabla.wallet.application.commands;
 
+import com.aminabla.wallet.application.handlers.Command;
 import com.aminabla.wallet.domain.Wallet.WalletId;
 import com.aminabla.wallet.domain.Amount;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = false)
-public class WithdrawMoneyCommand {
+@EqualsAndHashCode
+public class TransferMoneyCommand implements Command {
 
 
     private final WalletId sourceAccountId;
@@ -16,7 +17,7 @@ public class WithdrawMoneyCommand {
 
     private final Amount amount;
 
-    public WithdrawMoneyCommand(
+    public TransferMoneyCommand(
             WalletId sourceAccountId,
             WalletId targetAccountId,
             Amount amo) {

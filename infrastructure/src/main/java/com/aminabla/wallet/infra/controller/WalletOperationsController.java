@@ -1,58 +1,43 @@
 package com.aminabla.wallet.infra.controller;
 
-
-import com.aminabla.wallet.application.ports.api.WalletOperations;
-import com.aminabla.wallet.application.ports.api.commands.CreateWalletCommand;
-import com.aminabla.wallet.application.ports.api.commands.DepositMoneyCommand;
-import com.aminabla.wallet.application.ports.api.commands.WithdrawMoneyCommand;
-import com.aminabla.wallet.domain.Amount;
-import com.aminabla.wallet.domain.User;
-import com.aminabla.wallet.domain.Wallet.WalletId;
 import com.aminabla.wallet.infra.controller.dto.input.MoneyTransferDto;
-import com.aminabla.wallet.infra.controller.dto.input.UserDto;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.aminabla.wallet.infra.controller.dto.input.WalletIdDto;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-@RestController
+import java.security.Principal;
+
 @RequestMapping("/wallets")
-public class WalletOperationsController {
+public interface WalletOperationsController {
+    @ApiOperation(value = "Create Wallet")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully")
+    })
+    @PostMapping
+    void create(@ApiParam(name="walletId", value = "Identification (alias) for the wallet to be created")
+                @RequestBody WalletIdDto walletId, @ApiIgnore Principal principal);
 
-	private final WalletOperations walletOperations;
+    @ApiOperation(value = "Withdraw money from  wallet")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully")
+    })
+    @PostMapping("/{walletAlias}/withdraw")
+    void withdraw(@ApiParam(name="alias", value = "wallet alias") @PathVariable("walletAlias") String walletAlias,
+                  @ApiParam(name="moneytransfer", value = "Amount to be transferred")@RequestBody MoneyTransferDto moneyTransferDto,
+                  @ApiIgnore Principal principal);
 
-	public WalletOperationsController(WalletOperations walletOperations) {
-		this.walletOperations = walletOperations;
-	}
-
-
-	@PostMapping
-	public Long create(@RequestBody UserDto user) {
-		CreateWalletCommand command = new CreateWalletCommand(new User(new User.UserId(user.getUserId())));
-		return walletOperations.create(command).getId().getIdentifier();
-	}
-
-
-	@PostMapping("/withdraw")
-	public void withdraw(@RequestBody MoneyTransferDto moneyTransferDto) {
-
-		WithdrawMoneyCommand command = new WithdrawMoneyCommand(
-				new WalletId(moneyTransferDto.getSourceAccountId()),
-				new WalletId(moneyTransferDto.getTargetAccountId()),
-				Amount.of(moneyTransferDto.getAmount()));
-
-		walletOperations.withdraw(command);
-	}
-
-	@PostMapping("/deposit")
-	public void deposit(@RequestBody  MoneyTransferDto moneyTransferDto) {
-
-		DepositMoneyCommand command = new DepositMoneyCommand(
-				new WalletId(moneyTransferDto.getSourceAccountId()),
-				new WalletId(moneyTransferDto.getTargetAccountId()),
-				Amount.of(moneyTransferDto.getAmount()));
-
-		walletOperations.deposit(command);
-	}
-
+    @ApiOperation(value = "Deposit money on Wallet")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully")
+    })
+    @PostMapping("/{walletAlias}/deposit")
+    void deposit(@ApiParam(name="alias", value = "wallet alias") @PathVariable("walletAlias") String walletAlias,
+                 @ApiParam(name="moneytransfer", value = "Amount to be transferred") @Validated @RequestBody MoneyTransferDto moneyTransferDto,
+                 @ApiIgnore Principal principal);
 }

@@ -1,7 +1,6 @@
 package com.aminabla.wallet.infra.persistence;
 
 import com.aminabla.wallet.domain.Amount;
-import com.aminabla.wallet.domain.User;
 import com.aminabla.wallet.domain.Wallet;
 import com.aminabla.wallet.domain.Wallet.WalletId;
 import com.aminabla.wallet.domain.WalletOperation;
@@ -18,8 +17,7 @@ public class WalletMapper {
 			List<WalletOperationJpaEntity> activities) {
 
 		return new Wallet(
-				new WalletId(wallet.getId()),
-				new User.UserId(wallet.getUserId()),
+				new WalletId(wallet.getId().getAlias(), wallet.getId().getUserId()),
 				mapToActivityWindow(activities));
 
 	}
@@ -30,8 +28,7 @@ public class WalletMapper {
 		for (WalletOperationJpaEntity activity : activities) {
 			mappedActivities.add(new WalletOperation(
 					new WalletOperation.WalletOperationId(activity.getId()),
-					new WalletId(activity.getSourceWalletId()),
-					new WalletId(activity.getTargetWalletId()),
+					new WalletId(activity.getWalletId(), activity.getOwnerId()),
 					activity.getTimestamp(),
 					Amount.of(activity.getAmount())));
 		}
@@ -43,17 +40,16 @@ public class WalletMapper {
 		return new WalletOperationJpaEntity(
 				activity.getId() == null ? null : activity.getId().getIdentifier(),
 				activity.getTimestamp(),
-				activity.getSourceWalletId().getIdentifier(),
-				activity.getTargetWalletId().getIdentifier(),
+				activity.getWalletId().getWalletAlias(),
+				activity.getWalletId().getOwnerId(),
 				activity.getAmount().getAmount().doubleValue());
 	}
 
 	 WalletJpaEntity mapToJpaEntity(Wallet wallet) {
 		WalletJpaEntity entity = new WalletJpaEntity();
 		if(Objects.nonNull(wallet.getId())){
-			entity.setId(wallet.getId().getIdentifier());
+			entity.setId(new WalletEntityId(wallet.getId().getWalletAlias(), wallet.getId().getOwnerId()));
 		}
-		entity.setUserId(wallet.getUserId().getIdentifier());
 
 		return entity;
 	}

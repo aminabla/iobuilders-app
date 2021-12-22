@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 
 @Data
 public class WalletBalanceDto {
-    private Long walletId;
+    private String walletId;
     private BigDecimal amount;
 }

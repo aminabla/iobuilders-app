@@ -15,9 +15,7 @@ public class WalletOperationDto {
 
     private Long operationId;
 
-    private Long sourceWalletId;
-
-    private Long targetWalletId;
+    private String walletId;
 
     private LocalDateTime timestamp;
 

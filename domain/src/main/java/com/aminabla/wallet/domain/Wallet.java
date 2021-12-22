@@ -14,30 +14,22 @@ public class Wallet {
     @Getter
     private final WalletId id;
 
-    @Getter
-    private UserId userId;
-
     private List<WalletOperation> walletOperations;
 
-    public Wallet(WalletId id, UserId userId, List<WalletOperation> walletOperations) {
+    public Wallet(WalletId id, List<WalletOperation> walletOperations) {
         this.id = id;
-        this.userId = userId;
         this.walletOperations = new ArrayList<>(walletOperations);
     }
 
-    public Wallet(UserId userId, List<WalletOperation> walletOperations) {
-        this(null, userId, walletOperations);
+    public Wallet(WalletId walletId) {
+        this(walletId, Collections.emptyList());
     }
 
-    public Wallet(UserId userId) {
-        this(userId, Collections.emptyList());
-    }
-
-    public boolean withdraw(Amount amount, WalletId targetwalletId) {
+    public boolean withdraw(Amount amount) {
         if(!mayWithdraw(amount)) {
             return false;
         }
-        walletOperations.add(new WalletOperation(this.id, targetwalletId, amount.negate()));
+        walletOperations.add(new WalletOperation(this.id, amount.negate()));
         return true;
     }
 
@@ -52,8 +44,8 @@ public class Wallet {
     }
 
 
-    public void deposit(WalletId sourcewalletId, Amount amount) {
-        WalletOperation walletOperation = new WalletOperation(sourcewalletId, this.id, amount);
+    public void deposit(Amount amount) {
+        WalletOperation walletOperation = new WalletOperation(this.id, amount);
         this.walletOperations.add(walletOperation);
     }
 
@@ -62,9 +54,9 @@ public class Wallet {
     }
 
     @Value
-    public static class WalletId implements Identifier<Long>{
-        private Long identifier;
-
+    public static class WalletId{
+        private String walletAlias;
+        private String ownerId;
     }
 
 }

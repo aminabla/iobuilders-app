@@ -4,10 +4,13 @@ import com.aminabla.wallet.domain.Wallet;
 import lombok.Data;
 import lombok.Value;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
-@Value
+
+@Data
 public class MoneyTransferDto {
-    private Long sourceAccountId;
-    private Long targetAccountId;
+    @NotNull
+    @Positive
     private Double amount;
 }

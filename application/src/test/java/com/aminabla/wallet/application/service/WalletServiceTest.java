@@ -1,10 +1,9 @@
 package com.aminabla.wallet.application.service;
 
 import com.aminabla.wallet.application.exception.WalletNotFoundException;
-import com.aminabla.wallet.application.ports.api.commands.CreateWalletCommand;
-import com.aminabla.wallet.application.ports.api.commands.DepositMoneyCommand;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletBalanceCommand;
-import com.aminabla.wallet.application.ports.api.commands.WithdrawMoneyCommand;
+import com.aminabla.wallet.application.commands.CreateWalletCommand;
+import com.aminabla.wallet.application.commands.DepositMoneyCommand;
+import com.aminabla.wallet.application.commands.WithdrawMoneyCommand;
 import com.aminabla.wallet.application.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.application.ports.spi.WalletStatePort;
 import com.aminabla.wallet.application.service.common.AccountOperationTestData;
@@ -23,7 +22,6 @@ import java.util.Optional;
 
 import static com.aminabla.wallet.application.service.common.WalletTestData.defaultAccount;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +39,8 @@ class WalletServiceTest {
     @Test
     void walletNotFound() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
-        WithdrawMoneyCommand command = new WithdrawMoneyCommand(walletId, new Wallet.WalletId(2L), Amount.of(100));
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
+        WithdrawMoneyCommand command = new WithdrawMoneyCommand(walletId, Amount.of(100));
         when(loadWalletPort.loadWallet(walletId)).thenReturn(Optional.empty());
 
         //when/then
@@ -57,19 +55,17 @@ class WalletServiceTest {
     @Test
     void withdraw() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
-        WithdrawMoneyCommand command = new WithdrawMoneyCommand(walletId, new Wallet.WalletId(2L), Amount.of(100));
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
+        WithdrawMoneyCommand command = new WithdrawMoneyCommand(walletId, Amount.of(100));
         Wallet wallet = defaultAccount().
                 withId(walletId)
                 .withOperation(
                         new AccountOperationTestData.AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(100)).build())
                 .withOperation(
                         new AccountOperationTestData.AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(100)).build()
                 ).build();
         when(loadWalletPort.loadWallet(walletId)).thenReturn(Optional.of(wallet));
@@ -86,19 +82,17 @@ class WalletServiceTest {
     @Test
     void deposit() {
         //given
-        Wallet.WalletId walletId = new Wallet.WalletId(1L);
-        DepositMoneyCommand command = new DepositMoneyCommand(new Wallet.WalletId(2L), walletId, Amount.of(100));
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
+        DepositMoneyCommand command = new DepositMoneyCommand(walletId, Amount.of(100));
         Wallet wallet = defaultAccount().
                 withId(walletId)
                 .withOperation(
                         new AccountOperationTestData.AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(100)).build())
                 .withOperation(
                         new AccountOperationTestData.AccountOperationBuilder()
-                                .withTargetAccount(walletId)
-                                .withSourceAccount(new Wallet.WalletId(2L))
+                                .withWalletId(walletId)
                                 .withMoney(Amount.of(100)).build()
                 ).build();
         when(loadWalletPort.loadWallet(walletId)).thenReturn(Optional.of(wallet));
@@ -115,13 +109,13 @@ class WalletServiceTest {
     @Test
     void create() {
         //given
-        User user = new User(new User.UserId("aaa11111"));
-        CreateWalletCommand command = new CreateWalletCommand(user);
+        Wallet.WalletId walletId = new Wallet.WalletId("alias", "user");
+        CreateWalletCommand command = new CreateWalletCommand(walletId);
 
         //when
         walletService.create(command);
 
         //then
-        Mockito.verify(walletStatePort, times(1)).create(eq(user));
+        Mockito.verify(walletStatePort, times(1)).create(eq(walletId));
     }
 }

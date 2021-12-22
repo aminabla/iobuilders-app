@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "wallet")
@@ -16,10 +13,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 class WalletJpaEntity {
 
-	@Id
-	@GeneratedValue
-	private Long id;
+	@EmbeddedId
+	private WalletEntityId id;
 
-	private String userId;
+	@Version
+	private Long version;
 
 }

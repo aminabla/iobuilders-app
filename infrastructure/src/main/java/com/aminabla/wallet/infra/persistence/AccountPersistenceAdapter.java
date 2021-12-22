@@ -2,7 +2,6 @@ package com.aminabla.wallet.infra.persistence;
 
 import com.aminabla.wallet.application.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.application.ports.spi.WalletStatePort;
-import com.aminabla.wallet.domain.User;
 import com.aminabla.wallet.domain.Wallet;
 import com.aminabla.wallet.domain.WalletOperation;
 
@@ -27,7 +26,7 @@ public class AccountPersistenceAdapter implements LoadWalletPort, WalletStatePor
 
 		return getWallet(walletId).map(walletJpaEntity -> {
 			List<WalletOperationJpaEntity> activities =
-					walletOpsRepository.findByWalletId(walletId.getIdentifier());
+					walletOpsRepository.findByWalletId(walletId.getWalletAlias(), walletId.getOwnerId());
 
 			return walletMapper.mapToDomainEntity(
 					walletJpaEntity,
@@ -46,13 +45,13 @@ public class AccountPersistenceAdapter implements LoadWalletPort, WalletStatePor
 	}
 
 	@Override
-	public Wallet create(User user) {
-		return walletMapper.mapToDomainEntity(walletRepository.save(walletMapper.mapToJpaEntity(new Wallet(user.getUserId()))),
+	public Wallet create(Wallet.WalletId walletId) {
+		return walletMapper.mapToDomainEntity(walletRepository.save(walletMapper.mapToJpaEntity(new Wallet(walletId))),
 				Collections.emptyList());
 	}
 
 	private Optional<WalletJpaEntity> getWallet(Wallet.WalletId walletId){
-		return walletRepository.findById(walletId.getIdentifier());
+		return walletRepository.findById(new WalletEntityId(walletId.getWalletAlias(), walletId.getOwnerId()));
 	}
 
 }

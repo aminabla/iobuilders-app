@@ -12,7 +12,7 @@ public class WalletTestData {
 
     public static WalletBuilder defaultAccount() {
         return new WalletBuilder()
-                .withId(new WalletId(0L));
+                .withId(new WalletId("alias", "user"));
     }
 
 
@@ -42,7 +42,7 @@ public class WalletTestData {
         }
 
         public Wallet build() {
-            return new Wallet(this.id, userId, walletOperationList);
+            return new Wallet(this.id, walletOperationList);
         }
 
     }

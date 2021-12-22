@@ -2,8 +2,8 @@ package com.aminabla.wallet.application.service;
 
 import com.aminabla.wallet.application.exception.WalletNotFoundException;
 import com.aminabla.wallet.application.ports.api.WalletInfo;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletBalanceCommand;
-import com.aminabla.wallet.application.ports.api.commands.QueryWalletHistoryCommand;
+import com.aminabla.wallet.application.commands.QueryWalletBalanceCommand;
+import com.aminabla.wallet.application.commands.QueryWalletHistoryCommand;
 import com.aminabla.wallet.application.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.domain.Balance;
 import com.aminabla.wallet.domain.Wallet;

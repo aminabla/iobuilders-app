@@ -2,9 +2,9 @@ package com.aminabla.wallet.application.service;
 
 import com.aminabla.wallet.application.exception.WalletNotFoundException;
 import com.aminabla.wallet.application.ports.api.WalletOperations;
-import com.aminabla.wallet.application.ports.api.commands.CreateWalletCommand;
-import com.aminabla.wallet.application.ports.api.commands.DepositMoneyCommand;
-import com.aminabla.wallet.application.ports.api.commands.WithdrawMoneyCommand;
+import com.aminabla.wallet.application.commands.CreateWalletCommand;
+import com.aminabla.wallet.application.commands.DepositMoneyCommand;
+import com.aminabla.wallet.application.commands.WithdrawMoneyCommand;
 import com.aminabla.wallet.application.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.application.ports.spi.WalletStatePort;
 import com.aminabla.wallet.domain.Wallet;
@@ -27,36 +27,36 @@ public class WalletService implements WalletOperations {
     @Override
     public void withdraw(WithdrawMoneyCommand command) {
 
-        getWallet(command.getSourceAccountId())
+        getWallet(command.getWalletId())
                 .ifPresentOrElse(
                         wallet -> doWithdraw(wallet, command),
-                        () -> walletNotFound(command::getSourceAccountId)
+                        () -> walletNotFound(command::getWalletId)
                 );
     }
 
     private void doWithdraw(Wallet wallet, WithdrawMoneyCommand command) {
-        wallet.withdraw(command.getAmount(), command.getTargetAccountId());
+        wallet.withdraw(command.getAmount());
         walletStatePort.update(wallet);
     }
 
 
     @Override
     public void deposit(DepositMoneyCommand command) {
-        getWallet(command.getTargetAccountId())
+        getWallet(command.getWalletId())
                 .ifPresentOrElse(
                         wallet -> doDeposit(wallet, command),
-                        () -> walletNotFound(command::getTargetAccountId)
+                        () -> walletNotFound(command::getWalletId)
                 );
     }
 
     private void doDeposit(Wallet wallet, DepositMoneyCommand command) {
-        wallet.deposit(command.getSourceAccountId(), command.getAmount());
+        wallet.deposit(command.getAmount());
         walletStatePort.update(wallet);
     }
 
     @Override
-    public Wallet create(CreateWalletCommand createWalletCommand) {
-        return walletStatePort.create(createWalletCommand.getUser());
+    public void create(CreateWalletCommand createWalletCommand) {
+        walletStatePort.create(createWalletCommand.getWalletId());
     }
 
 
