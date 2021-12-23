@@ -1,7 +1,7 @@
 package com.aminabla.wallet.domain.common;
 
+import com.aminabla.wallet.domain.Money;
 import com.aminabla.wallet.domain.WalletOperation;
-import com.aminabla.wallet.domain.Amount;
 import com.aminabla.wallet.domain.Wallet;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ public class WalletOperationTestData {
 		private WalletOperation.WalletOperationId id;
 		private Wallet.WalletId walletId;
 		private LocalDateTime timestamp;
-		private Amount money;
+		private Money money;
 
 		public WalletOperationBuilder() {
 			this.timestamp = LocalDateTime.now();
@@ -33,7 +33,7 @@ public class WalletOperationTestData {
 			return this;
 		}
 
-		public WalletOperationBuilder withMoney(Amount money) {
+		public WalletOperationBuilder withMoney(Money money) {
 			this.money = money;
 			return this;
 		}

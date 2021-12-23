@@ -12,11 +12,13 @@ public class Securityconfig extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception{
+
         http.httpBasic()
                 .and().authorizeRequests().anyRequest().authenticated()
                 .and().csrf().disable();
     }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

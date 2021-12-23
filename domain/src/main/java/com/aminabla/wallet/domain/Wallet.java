@@ -1,9 +1,7 @@
 package com.aminabla.wallet.domain;
 
 
-import com.aminabla.wallet.domain.User.UserId;
 import lombok.Getter;
-import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +12,7 @@ public class Wallet {
     @Getter
     private final WalletId id;
 
-    private List<WalletOperation> walletOperations;
+    private final List<WalletOperation> walletOperations;
 
     public Wallet(WalletId id, List<WalletOperation> walletOperations) {
         this.id = id;
@@ -25,7 +23,7 @@ public class Wallet {
         this(walletId, Collections.emptyList());
     }
 
-    public boolean withdraw(Amount amount) {
+    public boolean withdraw(Money amount) {
         if(!mayWithdraw(amount)) {
             return false;
         }
@@ -33,10 +31,10 @@ public class Wallet {
         return true;
     }
 
-    public Amount balance(){
+    public Money balance(){
         return walletOperations.stream()
                 .map(WalletOperation::getAmount)
-                .reduce(Amount.ZERO, Amount::plus);
+                .reduce(Money.ZERO, Money::plus);
     }
 
     public List<WalletOperation> history(){
@@ -44,19 +42,16 @@ public class Wallet {
     }
 
 
-    public void deposit(Amount amount) {
+    public void deposit(Money amount) {
         WalletOperation walletOperation = new WalletOperation(this.id, amount);
         this.walletOperations.add(walletOperation);
     }
 
-    private boolean mayWithdraw(Amount money) {
+    private boolean mayWithdraw(Money money) {
         return balance().minus(money).isPositiveOrZero();
     }
 
-    @Value
-    public static class WalletId{
-        private String walletAlias;
-        private String ownerId;
+    public record WalletId(String walletAlias, String ownerId) {
     }
 
 }

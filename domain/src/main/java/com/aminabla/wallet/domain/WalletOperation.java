@@ -1,6 +1,5 @@
 package com.aminabla.wallet.domain;
 
-import com.aminabla.wallet.domain.User.UserId;
 import com.aminabla.wallet.domain.Wallet.WalletId;
 import lombok.Getter;
 import lombok.NonNull;
@@ -20,14 +19,14 @@ public class WalletOperation {
     private final LocalDateTime timestamp;
 
     @NonNull
-    private final Amount amount;
+    private final Money amount;
 
 
     public WalletOperation(
             WalletOperationId operationId,
             @NonNull WalletId walletId,
             @NonNull LocalDateTime timestamp,
-            Amount money) {
+            Money money) {
         this.id = operationId;
         this.walletId = walletId;
         this.timestamp = timestamp;
@@ -38,11 +37,11 @@ public class WalletOperation {
     public WalletOperation(
             WalletId targetWalletId,
             LocalDateTime timestamp,
-            Amount money) {
+            Money money) {
         this(null, targetWalletId, timestamp, money);
     }
 
-    public WalletOperation(WalletId id, Amount amount) {
+    public WalletOperation(WalletId id, Money amount) {
         this(id, LocalDateTime.now(), amount);
     }
 

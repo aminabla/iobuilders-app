@@ -16,16 +16,16 @@ class WalletTest {
                 .withId(walletId)
                 .withOperation(new WalletOperationBuilder()
                         .withWalletId(walletId)
-                        .withMoney(Amount.of(455)).build())
+                        .withMoney(Money.of(455)).build())
                 .withOperation(new WalletOperationBuilder()
                         .withWalletId(walletId)
-                        .withMoney(Amount.of(100)).build())
+                        .withMoney(Money.of(100)).build())
                 .build();
 
-        boolean success = wallet.withdraw(Amount.of(555L));
+        boolean success = wallet.withdraw(Money.of(555L));
 
         assertThat(success).isTrue();
-        assertThat(wallet.balance()).isEqualTo(Amount.of(0L));
+        assertThat(wallet.balance()).isEqualTo(Money.of(0L));
     }
 
     @Test
@@ -35,16 +35,16 @@ class WalletTest {
                 .withId(walletId)
                 .withOperation(new WalletOperationBuilder()
                         .withWalletId(walletId)
-                        .withMoney(Amount.of(455)).build())
+                        .withMoney(Money.of(455)).build())
                 .withOperation(new WalletOperationBuilder()
                         .withWalletId(walletId)
-                        .withMoney(Amount.of(100)).build())
+                        .withMoney(Money.of(100)).build())
                 .build();
 
-        boolean success = wallet.withdraw(Amount.of(1556L));
+        boolean success = wallet.withdraw(Money.of(1556L));
 
         assertThat(success).isFalse();
-        assertThat(wallet.balance()).isEqualTo(Amount.of(555L));
+        assertThat(wallet.balance()).isEqualTo(Money.of(555L));
     }
 
     @Test
@@ -54,14 +54,14 @@ class WalletTest {
                 .withId(walletId)
                 .withOperation(new WalletOperationBuilder()
                         .withWalletId(walletId)
-                        .withMoney(Amount.of(455)).build())
+                        .withMoney(Money.of(455)).build())
                 .withOperation(new WalletOperationBuilder()
                         .withWalletId(walletId)
-                        .withMoney(Amount.of(100)).build())
+                        .withMoney(Money.of(100)).build())
                 .build();
 
-        wallet.deposit(Amount.of(445L));
-        assertThat(wallet.balance()).isEqualTo(Amount.of(1000L));
+        wallet.deposit(Money.of(445L));
+        assertThat(wallet.balance()).isEqualTo(Money.of(1000L));
     }
 
 }

@@ -1,55 +1,68 @@
 package com.aminabla.wallet.infra.controller.impl;
 
 import com.aminabla.wallet.application.buses.CommandBus;
-import com.aminabla.wallet.application.commands.CreateWalletCommand;
-import com.aminabla.wallet.application.commands.DepositMoneyCommand;
-import com.aminabla.wallet.application.commands.WithdrawMoneyCommand;
-import com.aminabla.wallet.domain.Amount;
+import com.aminabla.wallet.application.commands.impl.CreateWalletCommand;
+import com.aminabla.wallet.application.commands.impl.DepositMoneyCommand;
+import com.aminabla.wallet.application.commands.impl.TransferMoneyCommand;
+import com.aminabla.wallet.application.commands.impl.WithdrawMoneyCommand;
+import com.aminabla.wallet.domain.Money;
 import com.aminabla.wallet.domain.Wallet.WalletId;
+import com.aminabla.wallet.infra.controller.auth.AuthenticationAccessHelper;
 import com.aminabla.wallet.infra.controller.WalletOperationsController;
 import com.aminabla.wallet.infra.controller.dto.input.MoneyTransferDto;
+import com.aminabla.wallet.infra.controller.dto.input.MoneyTransferToDto;
 import com.aminabla.wallet.infra.controller.dto.input.WalletIdDto;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.security.Principal;
 
 @RestController
 public class WalletOperationsControllerImpl implements WalletOperationsController {
 
-	private final CommandBus commandBus;
+    private final CommandBus commandBus;
 
-	public WalletOperationsControllerImpl(CommandBus commandBus) {
-		this.commandBus = commandBus;
-	}
+    private final AuthenticationAccessHelper authenticationHelper;
 
-
-	@Override
-	public void create(@RequestBody @Valid WalletIdDto user, Principal principal) {
-		CreateWalletCommand command = new CreateWalletCommand(new WalletId(user.getWalletAlias(), principal.getName()));
-		commandBus.handle(command);
-	}
+    public WalletOperationsControllerImpl(CommandBus commandBus, AuthenticationAccessHelper authenticationHelper) {
+        this.commandBus = commandBus;
+        this.authenticationHelper = authenticationHelper;
+    }
 
 
-	@Override
-	public void withdraw(String walletAlias, @RequestBody MoneyTransferDto moneyTransferDto, Principal principal) {
+    @Override
+    public void create(WalletIdDto user) {
+        CreateWalletCommand command = new CreateWalletCommand(new WalletId(user.getWalletAlias(), authenticationHelper.getAuthentication().getName()));
+        commandBus.handle(command);
+    }
 
-		WithdrawMoneyCommand command = new WithdrawMoneyCommand(
-				new WalletId(walletAlias, principal.getName()),
-				Amount.of(moneyTransferDto.getAmount()));
 
-		commandBus.handle(command);
-	}
+    @Override
+    public void withdraw(String alias, MoneyTransferDto moneyTransferDto) {
 
-	@Override
-	public void deposit(String walletAlias, @RequestBody MoneyTransferDto moneyTransferDto, Principal principal) {
+        WithdrawMoneyCommand command = new WithdrawMoneyCommand(
+                new WalletId(alias, authenticationHelper.getAuthentication().getName()),
+                Money.of(moneyTransferDto.getAmount()));
 
-		DepositMoneyCommand command = new DepositMoneyCommand(
-				new WalletId(walletAlias, principal.getName()),
-				Amount.of(moneyTransferDto.getAmount()));
+        commandBus.handle(command);
+    }
 
-		commandBus.handle(command);
-	}
+    @Override
+    public void deposit(String alias, MoneyTransferDto moneyTransferDto) {
+
+        DepositMoneyCommand command = new DepositMoneyCommand(
+                new WalletId(alias, authenticationHelper.getAuthentication().getName()),
+                Money.of(moneyTransferDto.getAmount()));
+
+        commandBus.handle(command);
+    }
+
+    @Override
+    public void transfer(String alias, MoneyTransferToDto moneyTransferDto) {
+        TransferMoneyCommand command = new TransferMoneyCommand(
+                new WalletId(alias, authenticationHelper.getAuthentication().getName()),
+                new WalletId(moneyTransferDto.getWalletAlias(), moneyTransferDto.getUserId()),
+                Money.of(moneyTransferDto.getAmount())
+        );
+
+        commandBus.handle(command);
+    }
 
 }

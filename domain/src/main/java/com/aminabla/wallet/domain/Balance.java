@@ -10,5 +10,5 @@ public class Balance {
     @Getter
     private final WalletId id;
     @Getter
-    private final Amount amount;
+    private final Money amount;
 }

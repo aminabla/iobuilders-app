@@ -1,12 +1,10 @@
 package com.aminabla.wallet.application.handlers.impl;
 
-import com.aminabla.wallet.application.commands.DepositMoneyCommand;
-import com.aminabla.wallet.application.commands.WithdrawMoneyCommand;
+import com.aminabla.wallet.application.commands.impl.WithdrawMoneyCommand;
 import com.aminabla.wallet.application.exception.CommandHandleException;
-import com.aminabla.wallet.application.handlers.Command;
+import com.aminabla.wallet.application.commands.Command;
 import com.aminabla.wallet.application.handlers.CommandHandler;
-import com.aminabla.wallet.application.ports.api.WalletOperations;
-import com.aminabla.wallet.application.service.WalletService;
+import com.aminabla.wallet.domain.ports.api.WalletOperations;
 
 public class WithdrawMoneyCommandHandler implements CommandHandler<WithdrawMoneyCommand> {
 
@@ -18,7 +16,7 @@ public class WithdrawMoneyCommandHandler implements CommandHandler<WithdrawMoney
 
     @Override
     public void handle(WithdrawMoneyCommand command) throws CommandHandleException {
-        walletService.withdraw(command);
+        walletService.withdraw(command.getWalletId(), command.getAmount());
     }
 
     @Override

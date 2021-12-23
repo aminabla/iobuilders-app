@@ -1,0 +1,231 @@
+openapi: 3.0.0
+info:
+  description: REST API for iobuilders app
+  version: "1.0"
+  title: "Wallet REST API"
+  contact:
+    name: agustin miña
+    email: agustin.mina.blanco@gmail.com
+tags:
+  - name: wallet-info-controller
+    description: Wallet Info Controller
+  - name: wallet-operations-controller
+    description: Wallet Operations Controller
+
+paths:
+  /wallets:
+    post:
+      tags:
+        - wallet-operations-controller
+      summary: Create Wallet
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletIdDto"
+        description: Identification (alias) for the wallet to be created
+      responses:
+        "200":
+          description: Successfully
+      deprecated: false
+      security:
+        - basicAuth: []
+      
+  /wallets/{alias}:
+    get:
+      tags:
+        - wallet-info-controller
+      summary: Get Wallet current balance
+      operationId: getWalletBalance
+      parameters:
+        - name: alias
+          in: path
+          description: wallet alias
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletBalanceDto"
+        "400":
+          description: Bad request if the wallet alias is absent in the request body or is
+            not registered
+      deprecated: false
+      security:
+        - basicAuth: []
+      
+  /wallets/{alias}/deposit:
+    post:
+      tags:
+        - wallet-operations-controller
+      summary: Deposit money on Wallet
+      operationId: deposit
+      parameters:
+        - name: alias
+          in: path
+          description: wallet alias
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/MoneyTransferDto"
+      responses:
+        "200":
+          description: Successfully
+        "400":
+          description: Bad request if the wallet alias is absent in the request body or is
+            not registered
+      deprecated: false
+      security:
+        - basicAuth: []
+
+  /wallets/{alias}/history:
+    get:
+      tags:
+        - wallet-info-controller
+      summary: Get Wallet's history of operations over balance
+      operationId: getWalletHistory
+      parameters:
+        - name: alias
+          in: path
+          description: wallet alias
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WalletOperationDto"
+        "400":
+          description: Bad request if the wallet alias is absent in the request body or is
+            not registered
+      deprecated: false
+      security:
+        - basicAuth: []
+
+  /wallets/{alias}/transfer:
+    post:
+      tags:
+        - wallet-operations-controller
+      summary: Transfer money from one Wallet to another
+      operationId: transfer
+      parameters:
+        - name: alias
+          in: path
+          description: source wallet alias
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoneyTransferToDto"
+        description: Data of the wallet where the money is going to be transferred to
+      responses:
+        "200":
+          description: Successfully
+        "400":
+          description: Bad request if the wallet alias is absent in the request body or is
+            not registered
+      deprecated: false
+      security:
+        - basicAuth: []
+
+  /wallets/{alias}/withdraw:
+    post:
+      tags:
+        - wallet-operations-controller
+      summary: Withdraw money from  wallet
+      operationId: withdraw
+      parameters:
+        - name: alias
+          in: path
+          description: wallet alias
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/MoneyTransferDto"
+      responses:
+        "200":
+          description: Successfully
+        "400":
+          description: Bad request if the wallet alias is absent in the request body or is
+            not registered
+      deprecated: false
+      security:
+        - basicAuth: []
+
+servers:
+  - url: //localhost:8282/
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  requestBodies:
+    MoneyTransferDto:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MoneyTransferDto"
+      description: Amount to be transferred
+  schemas:
+    MoneyTransferDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+      title: MoneyTransferDto
+    MoneyTransferToDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+        userId:
+          type: string
+        walletAlias:
+          type: string
+      title: MoneyTransferToDto
+    WalletBalanceDto:
+      type: object
+      properties:
+        amount:
+          type: number
+        walletId:
+          type: string
+      title: WalletBalanceDto
+    WalletIdDto:
+      type: object
+      properties:
+        walletAlias:
+          type: string
+          description: alias for the wallet
+      title: WalletIdDto
+    WalletOperationDto:
+      type: object
+      properties:
+        amount:
+          type: number
+        operationId:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        walletId:
+          type: string
+      title: WalletOperationDto

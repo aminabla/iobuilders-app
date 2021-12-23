@@ -1,7 +1,6 @@
 package com.aminabla.wallet.infra.controller.mapper;
 
 import com.aminabla.wallet.domain.Balance;
-import com.aminabla.wallet.domain.Wallet;
 import com.aminabla.wallet.domain.WalletOperation;
 import com.aminabla.wallet.infra.controller.dto.output.WalletBalanceDto;
 import com.aminabla.wallet.infra.controller.dto.output.WalletOperationDto;

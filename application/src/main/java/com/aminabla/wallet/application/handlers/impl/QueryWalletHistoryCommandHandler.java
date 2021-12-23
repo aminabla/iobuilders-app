@@ -1,16 +1,12 @@
 package com.aminabla.wallet.application.handlers.impl;
 
-import com.aminabla.wallet.application.commands.QueryWalletBalanceCommand;
-import com.aminabla.wallet.application.commands.QueryWalletHistoryCommand;
-import com.aminabla.wallet.application.handlers.Query;
+import com.aminabla.wallet.application.commands.impl.QueryWalletHistoryCommand;
+import com.aminabla.wallet.application.commands.Query;
 import com.aminabla.wallet.application.handlers.QueryHandler;
-import com.aminabla.wallet.application.ports.api.WalletInfo;
-import com.aminabla.wallet.application.service.WalletInfoService;
-import com.aminabla.wallet.domain.Balance;
 import com.aminabla.wallet.domain.WalletOperation;
+import com.aminabla.wallet.domain.ports.api.WalletInfo;
 
 import java.util.List;
-import java.util.ListIterator;
 
 public class QueryWalletHistoryCommandHandler implements QueryHandler<List<WalletOperation>, QueryWalletHistoryCommand> {
 
@@ -22,7 +18,7 @@ public class QueryWalletHistoryCommandHandler implements QueryHandler<List<Walle
 
     @Override
     public List<WalletOperation> handle(QueryWalletHistoryCommand query){
-        return walletInfoService.getOperationsHistory(query);
+        return walletInfoService.getOperationsHistory(query.getWalletId());
     }
 
     @Override

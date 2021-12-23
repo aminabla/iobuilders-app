@@ -15,7 +15,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <org.projectlombok.version>1.18.22</org.projectlombok.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
-        <springfox-version>2.9.2</springfox-version>
+        <springfox-version>3.0.0</springfox-version>
     </properties>
 
     <dependencies>
@@ -61,11 +61,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
@@ -73,7 +68,7 @@
         <!--SpringFox dependencies -->
         <dependency>
             <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
+            <artifactId>springfox-oas</artifactId>
             <version>${springfox-version}</version>
         </dependency>
         <dependency>
@@ -81,6 +76,11 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springdoc</groupId>-->
+<!--            <artifactId>springdoc-openapi-ui</artifactId>-->
+<!--            <version>1.5.2</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

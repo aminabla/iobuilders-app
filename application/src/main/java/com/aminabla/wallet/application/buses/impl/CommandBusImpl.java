@@ -1,30 +1,35 @@
 package com.aminabla.wallet.application.buses.impl;
 
 import com.aminabla.wallet.application.buses.CommandBus;
-import com.aminabla.wallet.application.handlers.Command;
+import com.aminabla.wallet.application.buses.CommandValidator;
+import com.aminabla.wallet.application.commands.Command;
 import com.aminabla.wallet.application.handlers.CommandHandler;
 
 import java.util.List;
 
-public class CommandBusImpl implements CommandBus {
+public class CommandBusImpl<T extends Command> implements CommandBus<T> {
 
 
-    private final List<CommandHandler<? super Command>> handlers;
+    private final List<CommandHandler<T>> handlers;
 
-    public CommandBusImpl(List<CommandHandler<? super Command>> handlers) {
+    private final CommandValidator<T> validator;
+
+    public CommandBusImpl(List<CommandHandler<T>> handlers, CommandValidator<T> validator) {
         this.handlers = handlers;
+        this.validator = validator;
     }
 
 
     @Override
-    public <T extends Command> void handle(T command) {
+    public void handle(T command) {
+            validator.validate(command);
         getHandler(command).handle(command);
     }
 
-    private CommandHandler<? super Command> getHandler(Command command){
+    private CommandHandler<T> getHandler(Command command){
         return handlers.stream()
                 .filter(handler -> handler.canHandle(command))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No valid handler found for command" + command.getClass().getSimpleName()));
+                .orElseThrow(() -> new IllegalStateException("No valid handler found for command: " + command.getClass().getSimpleName()));
     }
 }
