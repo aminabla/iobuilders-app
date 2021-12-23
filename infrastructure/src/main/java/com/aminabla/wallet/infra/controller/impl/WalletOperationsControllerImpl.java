@@ -12,9 +12,11 @@ import com.aminabla.wallet.infra.controller.WalletOperationsController;
 import com.aminabla.wallet.infra.controller.dto.input.MoneyTransferDto;
 import com.aminabla.wallet.infra.controller.dto.input.MoneyTransferToDto;
 import com.aminabla.wallet.infra.controller.dto.input.WalletIdDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 public class WalletOperationsControllerImpl implements WalletOperationsController {
 
     private final CommandBus commandBus;
@@ -30,6 +32,7 @@ public class WalletOperationsControllerImpl implements WalletOperationsControlle
     @Override
     public void create(WalletIdDto user) {
         CreateWalletCommand command = new CreateWalletCommand(new WalletId(user.getWalletAlias(), authenticationHelper.getAuthentication().getName()));
+        log.debug("Request for create wallet: {} for user '{}'", command.getWalletId().walletAlias(), command.getWalletId().ownerId());
         commandBus.handle(command);
     }
 
@@ -40,7 +43,7 @@ public class WalletOperationsControllerImpl implements WalletOperationsControlle
         WithdrawMoneyCommand command = new WithdrawMoneyCommand(
                 new WalletId(alias, authenticationHelper.getAuthentication().getName()),
                 Money.of(moneyTransferDto.getAmount()));
-
+        log.debug("Request for withdraw {}  on wallet: '{}'", command.getAmount().getAmount(), command.getWalletId().walletAlias());
         commandBus.handle(command);
     }
 
@@ -50,7 +53,7 @@ public class WalletOperationsControllerImpl implements WalletOperationsControlle
         DepositMoneyCommand command = new DepositMoneyCommand(
                 new WalletId(alias, authenticationHelper.getAuthentication().getName()),
                 Money.of(moneyTransferDto.getAmount()));
-
+        log.debug("Request for deposit {}  on wallet: '{}'", command.getAmount().getAmount(), command.getWalletId().walletAlias());
         commandBus.handle(command);
     }
 
@@ -61,7 +64,9 @@ public class WalletOperationsControllerImpl implements WalletOperationsControlle
                 new WalletId(moneyTransferDto.getWalletAlias(), moneyTransferDto.getUserId()),
                 Money.of(moneyTransferDto.getAmount())
         );
-
+        log.debug("Request for transfer {}  from wallet: '{}' to wallet: '{}'", command.getAmount().getAmount(),
+                command.getSourceWalletId().walletAlias(),
+                command.getTargetWalletId().walletAlias());
         commandBus.handle(command);
     }
 

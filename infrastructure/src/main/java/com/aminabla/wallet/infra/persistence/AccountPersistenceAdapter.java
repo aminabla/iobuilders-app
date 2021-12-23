@@ -5,7 +5,6 @@ import com.aminabla.wallet.domain.WalletOperation;
 import com.aminabla.wallet.domain.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.domain.ports.spi.WalletStatePort;
 import com.aminabla.wallet.infra.mapper.WalletMapper;
-import com.aminabla.wallet.infra.mapper.WalletMapperImpl;
 import com.aminabla.wallet.infra.persistence.entity.WalletEntityId;
 import com.aminabla.wallet.infra.persistence.entity.WalletJpaEntity;
 import com.aminabla.wallet.infra.persistence.entity.WalletOperationJpaEntity;

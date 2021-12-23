@@ -7,20 +7,20 @@ import com.aminabla.wallet.domain.exception.WalletNotFoundException;
 import com.aminabla.wallet.domain.ports.api.WalletOperations;
 import com.aminabla.wallet.domain.ports.spi.LoadWalletPort;
 import com.aminabla.wallet.domain.ports.spi.WalletStatePort;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
-public class WalletService implements WalletOperations {
-
-    private final LoadWalletPort loadWalletPort;
+@Slf4j
+public class WalletService extends BaseWalletService implements WalletOperations {
 
     private final WalletStatePort walletStatePort;
 
     public WalletService(LoadWalletPort loadWalletPort, WalletStatePort walletStatePort) {
-        this.loadWalletPort = loadWalletPort;
+        super(loadWalletPort);
         this.walletStatePort = walletStatePort;
     }
 
@@ -37,8 +37,10 @@ public class WalletService implements WalletOperations {
 
     private void doWithdraw(Wallet wallet, Money amount) {
         if(wallet.withdraw(amount)){
+            log.debug("Proceed to withdraw {} from wallet '{}' from external port", amount.getAmount(), wallet.getId().walletAlias());
             walletStatePort.update(wallet);
         }else {
+            log.error("Not enough money to withdraw {} from wallet '{}' from external port", amount.getAmount(), wallet.getId().walletAlias());
             throw new NotEnoughMoneyException(format("Not enough money to withdraw: %s", amount.getAmount()));
         }
 
@@ -65,13 +67,7 @@ public class WalletService implements WalletOperations {
     }
 
 
-    private Optional<Wallet> getWallet(Wallet.WalletId walletId) {
-        return loadWalletPort.loadWallet(walletId);
-    }
 
-    private void walletNotFound(Supplier<Wallet.WalletId> supplier){
-        throw new WalletNotFoundException(format("Wallet: %s not found", supplier.get()));
-    }
 }
 
 

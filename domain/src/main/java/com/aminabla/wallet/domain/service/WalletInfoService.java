@@ -6,41 +6,39 @@ import com.aminabla.wallet.domain.WalletOperation;
 import com.aminabla.wallet.domain.exception.WalletNotFoundException;
 import com.aminabla.wallet.domain.ports.api.WalletInfo;
 import com.aminabla.wallet.domain.ports.spi.LoadWalletPort;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 
-public class WalletInfoService implements WalletInfo {
+import static java.lang.String.format;
 
-	private final LoadWalletPort loadWalletPort;
 
-	public WalletInfoService(LoadWalletPort loadAccountPort) {
-		this.loadWalletPort = loadAccountPort;
+@Slf4j
+public class WalletInfoService extends BaseWalletService implements WalletInfo {
+
+	public WalletInfoService(LoadWalletPort loadWalletPort) {
+		super(loadWalletPort);
 	}
 
 	@Override
 	public Balance getBalance(Wallet.WalletId walletId) {
+		log.debug("Retrieving wallet '{}' from port", walletId.walletAlias());
 		return getWallet(walletId)
 				.map(this::toBalance)
-				.orElseThrow(() -> walletNotFound(walletId));
+				.orElseThrow(() -> new WalletNotFoundException(format("Wallet: %s not found", walletId)));
 	}
 
 	@Override
 	public List<WalletOperation> getOperationsHistory(Wallet.WalletId walletId) {
+		log.debug("Retrieving operations history for wallet: '{}' from external port", walletId.walletAlias());
 		return getWallet(walletId)
 				.map(Wallet::history)
-				.orElseThrow(() -> walletNotFound(walletId));
+				.orElseThrow(() -> new WalletNotFoundException(format("Wallet: %s not found", walletId)));
 	}
 
 	private Balance toBalance(Wallet wallet){
 		return new Balance(wallet.getId(), wallet.balance());
 	}
 
-	private Optional<Wallet> getWallet(Wallet.WalletId walletId) {
-		return loadWalletPort.loadWallet(walletId);
-	}
-
-	private WalletNotFoundException walletNotFound(Wallet.WalletId walletId){
-		return new WalletNotFoundException(String.format("Wallet: %s not found", walletId));
-	}
 }
