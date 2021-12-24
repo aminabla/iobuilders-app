@@ -6,8 +6,7 @@ import com.aminabla.wallet.application.buses.QueryBus;
 import com.aminabla.wallet.application.buses.impl.CommandBusImpl;
 import com.aminabla.wallet.application.buses.impl.QueryBusImpl;
 import com.aminabla.wallet.application.buses.impl.ValidatorImpl;
-import com.aminabla.wallet.application.commands.impl.QueryWalletBalanceCommand;
-import com.aminabla.wallet.application.commands.impl.QueryWalletHistoryCommand;
+import com.aminabla.wallet.application.commands.impl.*;
 import com.aminabla.wallet.application.commands.Command;
 import com.aminabla.wallet.application.event.publisher.EventPublisher;
 import com.aminabla.wallet.application.handlers.CommandHandler;
@@ -53,27 +52,27 @@ public class AppConfig {
     }
 
     @Bean
-    public CommandHandler<? extends Command> createWalletCommandCommandHandler(WalletOperations walletService) {
+    public CommandHandler<CreateWalletCommand> createWalletCommandCommandHandler(WalletOperations walletService) {
         return new CreateWalletCommandHandler(walletService);
     }
 
     @Bean
-    public CommandHandler<? extends Command> depositMoneyCommandCommandHandler(WalletOperations walletService) {
+    public CommandHandler<DepositMoneyCommand> depositMoneyCommandCommandHandler(WalletOperations walletService) {
         return new DepositMoneyCommandHandler(walletService);
     }
 
     @Bean
-    public CommandHandler<? extends Command> withdrawMoneyCommandCommandHandler(WalletOperations walletService) {
+    public CommandHandler<WithdrawMoneyCommand> withdrawMoneyCommandCommandHandler(WalletOperations walletService) {
         return new WithdrawMoneyCommandHandler(walletService);
     }
 
     @Bean
-    public CommandHandler<? extends Command> transferMoneyCommandCommandHandler(WalletOperations walletService, EventPublisher eventPublisher) {
+    public CommandHandler<TransferMoneyCommand> transferMoneyCommandCommandHandler(WalletOperations walletService, EventPublisher eventPublisher) {
         return new TransferMoneyCommandHandler(walletService, eventPublisher);
     }
 
     @Bean
-    public QueryBus queryBus(List<QueryHandler<?, ? extends Query<?>>> handlers, CommandValidator<Query> validator) {
+    public QueryBus queryBus(List<QueryHandler<?, ? extends Query<?>>> handlers, CommandValidator<Query<?>> validator) {
         return new QueryBusImpl(handlers, validator);
     }
 

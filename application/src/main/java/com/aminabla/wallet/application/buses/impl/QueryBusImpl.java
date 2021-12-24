@@ -11,9 +11,9 @@ public class QueryBusImpl implements QueryBus {
 
     private final List<QueryHandler<?, ? extends Query<?>>> handlers;
 
-    private final CommandValidator<Query> validator;
+    private final CommandValidator<Query<?>> validator;
 
-    public QueryBusImpl(List<QueryHandler<?, ? extends Query<?>>> handlers, CommandValidator<Query> validator) {
+    public QueryBusImpl(List<QueryHandler<?, ? extends Query<?>>> handlers, CommandValidator<Query<?>> validator) {
         this.handlers = handlers;
         this.validator = validator;
     }

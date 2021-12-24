@@ -19,7 +19,7 @@ public abstract class BaseWalletService {
 
 	private final LoadWalletPort loadWalletPort;
 
-	public BaseWalletService(LoadWalletPort loadAccountPort) {
+	protected BaseWalletService(LoadWalletPort loadAccountPort) {
 		this.loadWalletPort = loadAccountPort;
 	}
 

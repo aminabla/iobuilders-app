@@ -1,6 +1,8 @@
 package com.aminabla.wallet.application.buses;
 
-public interface CommandBus<T> {
+import com.aminabla.wallet.application.commands.Command;
 
-    void handle(T command);
+public interface CommandBus {
+
+    <T extends Command> void handle(T command);
 }

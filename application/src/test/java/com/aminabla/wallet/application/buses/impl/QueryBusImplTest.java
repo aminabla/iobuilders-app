@@ -33,7 +33,7 @@ class QueryBusImplTest {
 
     WalletInfo walletInfo;
 
-    CommandValidator<Query> commandValidator;
+    CommandValidator<Query<?>> commandValidator;
 
 
     @BeforeEach
