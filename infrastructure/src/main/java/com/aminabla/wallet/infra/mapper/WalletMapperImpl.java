@@ -18,37 +18,37 @@ public class WalletMapperImpl implements WalletMapper {
 	@Override
 	public Wallet mapToDomainEntity(
 			WalletJpaEntity wallet,
-			List<WalletOperationJpaEntity> activities) {
+			List<WalletOperationJpaEntity> ops) {
 
 		return new Wallet(
 				new WalletId(wallet.getId().getAlias(), wallet.getId().getUserId()),
-				mapToActivityWindow(activities));
+				mapToOperation(ops));
 
 	}
 
 	@Override
-	public List<WalletOperation> mapToActivityWindow(List<WalletOperationJpaEntity> activities) {
-		List<WalletOperation> mappedActivities = new ArrayList<>();
+	public List<WalletOperation> mapToOperation(List<WalletOperationJpaEntity> operations) {
+		List<WalletOperation> ops = new ArrayList<>();
 
-		for (WalletOperationJpaEntity activity : activities) {
-			mappedActivities.add(new WalletOperation(
-					new WalletOperation.WalletOperationId(activity.getId()),
-					new WalletId(activity.getWalletId(), activity.getOwnerId()),
-					activity.getTimestamp(),
-					Money.of(activity.getAmount())));
+		for (WalletOperationJpaEntity op : operations) {
+			ops.add(new WalletOperation(
+					new WalletOperation.WalletOperationId(op.getId()),
+					new WalletId(op.getWalletId(), op.getOwnerId()),
+					op.getTimestamp(),
+					Money.of(op.getAmount())));
 		}
 
-		return mappedActivities;
+		return ops;
 	}
 
 	@Override
-	public WalletOperationJpaEntity mapToJpaEntity(WalletOperation activity) {
+	public WalletOperationJpaEntity mapToJpaEntity(WalletOperation operation) {
 		return new WalletOperationJpaEntity(
-				activity.getId() == null ? null : activity.getId().getIdentifier(),
-				activity.getTimestamp(),
-				activity.getWalletId().walletAlias(),
-				activity.getWalletId().ownerId(),
-				activity.getAmount().getAmount().doubleValue());
+				operation.getId() == null ? null : operation.getId().getIdentifier(),
+				operation.getTimestamp(),
+				operation.getWalletId().walletAlias(),
+				operation.getWalletId().ownerId(),
+				operation.getAmount().getAmount().doubleValue());
 	}
 
 	 @Override

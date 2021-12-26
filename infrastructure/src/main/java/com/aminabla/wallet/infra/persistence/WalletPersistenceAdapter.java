@@ -15,13 +15,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class AccountPersistenceAdapter implements LoadWalletPort, WalletStatePort {
+public class WalletPersistenceAdapter implements LoadWalletPort, WalletStatePort {
 
 	private final WalletRepository walletRepository;
 	private final WalletOperationsRepository walletOpsRepository;
 	private final WalletMapper walletMapper;
 
-	public AccountPersistenceAdapter(WalletRepository walletRepository, WalletOperationsRepository walletOpsRepository, WalletMapper walletMapper) {
+	public WalletPersistenceAdapter(WalletRepository walletRepository, WalletOperationsRepository walletOpsRepository, WalletMapper walletMapper) {
 		this.walletRepository = walletRepository;
 		this.walletOpsRepository = walletOpsRepository;
 		this.walletMapper = walletMapper;
@@ -31,21 +31,21 @@ public class AccountPersistenceAdapter implements LoadWalletPort, WalletStatePor
 	public Optional<Wallet> loadWallet(Wallet.WalletId walletId) {
 
 		return getWallet(walletId).map(walletJpaEntity -> {
-			List<WalletOperationJpaEntity> activities =
+			List<WalletOperationJpaEntity> ops =
 					walletOpsRepository.findByWalletId(walletId.walletAlias(), walletId.ownerId());
 
 			return walletMapper.mapToDomainEntity(
 					walletJpaEntity,
-					activities);
+					ops);
 		});
 	}
 
 
 	@Override
 	public void update(Wallet wallet) {
-		for (WalletOperation activity : wallet.history()) {
-			if (activity.getId() == null) {
-				walletOpsRepository.save(walletMapper.mapToJpaEntity(activity));
+		for (WalletOperation operation : wallet.history()) {
+			if (operation.getId() == null) {
+				walletOpsRepository.save(walletMapper.mapToJpaEntity(operation));
 			}
 		}
 	}

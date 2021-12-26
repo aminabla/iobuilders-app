@@ -10,11 +10,11 @@ import java.util.List;
 public interface WalletMapper {
     Wallet mapToDomainEntity(
             WalletJpaEntity wallet,
-            List<WalletOperationJpaEntity> activities);
+            List<WalletOperationJpaEntity> operations);
 
-    List<WalletOperation> mapToActivityWindow(List<WalletOperationJpaEntity> activities);
+    List<WalletOperation> mapToOperation(List<WalletOperationJpaEntity> operations);
 
-    WalletOperationJpaEntity mapToJpaEntity(WalletOperation activity);
+    WalletOperationJpaEntity mapToJpaEntity(WalletOperation operation);
 
     WalletJpaEntity mapToJpaEntity(Wallet wallet);
 }

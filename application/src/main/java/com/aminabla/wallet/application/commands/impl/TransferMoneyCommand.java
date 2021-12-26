@@ -20,11 +20,11 @@ public class TransferMoneyCommand implements Command {
     Money amount;
 
     public TransferMoneyCommand(
-            WalletId sourceAccountId,
-            WalletId targetAccountId,
+            WalletId sourceWalletId,
+            WalletId targetWalletId,
             Money amo) {
-        this.sourceWalletId = sourceAccountId;
-        this.targetWalletId = targetAccountId;
+        this.sourceWalletId = sourceWalletId;
+        this.targetWalletId = targetWalletId;
         this.amount = amo;
     }
 }

@@ -27,8 +27,8 @@ import com.aminabla.wallet.infra.event.listener.WalletEventListener;
 import com.aminabla.wallet.infra.event.publisher.impl.EventPublisherImpl;
 import com.aminabla.wallet.infra.event.listener.impl.WalletEventListenerImpl;
 import com.aminabla.wallet.infra.mapper.WalletMapper;
-import com.aminabla.wallet.infra.persistence.AccountPersistenceAdapter;
 import com.aminabla.wallet.infra.mapper.WalletMapperImpl;
+import com.aminabla.wallet.infra.persistence.WalletPersistenceAdapter;
 import com.aminabla.wallet.infra.persistence.repository.WalletOperationsRepository;
 import com.aminabla.wallet.infra.persistence.repository.WalletRepository;
 import org.springframework.context.ApplicationEventPublisher;
@@ -82,7 +82,7 @@ public class AppConfig {
     }
 
     @Bean
-    public CommandValidator<?> commandValidator() {
+    public <T> CommandValidator<T> commandValidator() {
         return new ValidatorImpl<>();
     }
 
@@ -98,12 +98,17 @@ public class AppConfig {
 
     @Bean
     public LoadWalletPort loadWalletPort(WalletRepository walletRepository, WalletOperationsRepository walletOperationsRepository) {
-        return new AccountPersistenceAdapter(walletRepository, walletOperationsRepository, walletMapper());
+        return walletPersistenceAdapter(walletRepository, walletOperationsRepository);
     }
 
     @Bean
     public WalletStatePort walletStatePort(WalletRepository walletRepository, WalletOperationsRepository walletOperationsRepository) {
-        return new AccountPersistenceAdapter(walletRepository, walletOperationsRepository, walletMapper());
+        return walletPersistenceAdapter(walletRepository, walletOperationsRepository);
+    }
+
+    @Bean
+    public WalletPersistenceAdapter walletPersistenceAdapter(WalletRepository walletRepository, WalletOperationsRepository walletOperationsRepository) {
+        return new WalletPersistenceAdapter(walletRepository, walletOperationsRepository, walletMapper());
     }
 
     @Bean
